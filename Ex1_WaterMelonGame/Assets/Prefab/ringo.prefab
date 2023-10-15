@@ -139,5 +139,9 @@ MonoBehaviour:
   _fruitName: "\u30EA\u30F3\u30B4"
   level: 5
   point: 32
+  _minX: -2.5
+  _maxX: 2.49
   speed: 3
   canMove: 1
+  canFusion: 1
+  firstCollision: 1

@@ -139,5 +139,9 @@ MonoBehaviour:
   _fruitName: "\u30D1\u30A4\u30CA\u30C3\u30D7\u30EB"
   level: 8
   point: 256
+  _minX: -2.5
+  _maxX: 2.49
   speed: 3
   canMove: 1
+  canFusion: 1
+  firstCollision: 1

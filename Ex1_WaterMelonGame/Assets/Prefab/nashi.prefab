@@ -139,5 +139,9 @@ MonoBehaviour:
   _fruitName: "\u30CA\u30B7"
   level: 6
   point: 64
+  _minX: -2.5
+  _maxX: 2.49
   speed: 3
   canMove: 1
+  canFusion: 1
+  firstCollision: 1

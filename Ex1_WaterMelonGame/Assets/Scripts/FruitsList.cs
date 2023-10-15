@@ -7,23 +7,20 @@ public class FruitsList : MonoBehaviour
     public Fruits[] fruitsList;
     public GameObject line;
 
-    public bool canSpawn{get;set;} = true;
+    public bool canSpawn { get; set; } = true;
+    private float tmp = 0;
 
     public void SpawnFruit()
     {
         if (canSpawn)
         {
+            tmp = 0;
             int num = Random.Range(0, 5);
             Instantiate(fruitsList[num], transform.position, Quaternion.identity);
             line.SetActive(true);
             Debug.Log($"{num}番のフルーツが生成!");
             canSpawn = false;
         }
-
-    }
-
-    public void FusionFruit()
-    {
 
     }
 
@@ -46,6 +43,17 @@ public class FruitsList : MonoBehaviour
 
     void Update()
     {
-        Move();
+        if (canSpawn)
+        {
+            tmp += Time.deltaTime;
+            if(tmp >= 5)
+            {
+                SpawnFruit();
+            }
+        }
+        else
+        {
+            Move();
+        }
     }
 }

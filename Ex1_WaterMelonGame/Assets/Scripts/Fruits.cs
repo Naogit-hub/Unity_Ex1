@@ -8,12 +8,13 @@ public class Fruits : MonoBehaviour
     [SerializeField] private int level;
     [SerializeField] private int point;
     // x軸方向の移動範囲の最小値
-    private float _minX = -2.5f;
+    [SerializeField] private float _minX = -2.5f;
 
     // x軸方向の移動範囲の最大値
-    private float _maxX = 2.5f;
+    [SerializeField] private float _maxX = 2.49f;
 
-    private Rigidbody2D rb2d{get;set;}
+    private Rigidbody2D rb2d { get; set; }
+    private CircleCollider2D cc2d { get; set; }
 
     public float speed = 3f;
     public bool canMove = true;
@@ -23,7 +24,9 @@ public class Fruits : MonoBehaviour
     void Awake()
     {
         rb2d = gameObject.GetComponent<Rigidbody2D>();
+        //cc2d = gameObject.GetComponent<CircleCollider2D>();
         rb2d.isKinematic = true;  //物理演算を止める。
+        //cc2d.isTrigger = true;
     }
 
     void Update()
@@ -47,6 +50,7 @@ public class Fruits : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 rb2d.isKinematic = false;
+                cc2d.isTrigger = false;
                 this.canMove = false;
                 //                this.enabled = false;
                 GameManager.instance.fl.line.SetActive(false);
@@ -61,8 +65,6 @@ public class Fruits : MonoBehaviour
 
             transform.position = pos;
         }
-
-
     }
 
     public void OnCollisionEnter2D(Collision2D c)
@@ -79,7 +81,11 @@ public class Fruits : MonoBehaviour
                 {
                     Debug.Log($"{_fruitName}が融合!");
                     canFusion = false;  //自身を融合済みにする。
+                    GameManager.instance.score+=this.point;
+                    Debug.Log($"現在{GameManager.instance.score}ポイント!");
                     Fruits f = Instantiate(GameManager.instance.fl.fruitsList[level + 1], c.transform.position, Quaternion.identity);
+                    //f.cc2d = f.gameObject.GetComponent<CircleCollider2D>();
+                    //f.cc2d.isTrigger = true;
                     f.rb2d.isKinematic = false;
                     f.canMove = false;
                     Destroy(c.gameObject);
@@ -88,15 +94,29 @@ public class Fruits : MonoBehaviour
                 else return;
             }
         }
-        else
-        {
-            return;
-        }
-        if(firstCollision)
+
+        if (firstCollision)  //初回の衝突のみ作動する。
         {
             GameManager.instance.fl.SpawnFruit();
             firstCollision = false;
         }
 
     }
+
+    public void OnTriggerEnter2D(Collider2D c)  //融合したフルーツthisに周りのオブジェクトcが侵入する
+    {
+        Fruits oppFruit = c.gameObject.GetComponent<Fruits>();
+        
+        Debug.Log($"{this.name}が{c.name}に貫通");
+        this.cc2d.isTrigger = false;
+        
+        if (c.CompareTag("Fruit"))
+        {
+            Debug.Log("fruitと衝突");
+            Vector3 distination = (c.transform.position - transform.position).normalized;
+            oppFruit.rb2d.AddForce(distination * 10, ForceMode2D.Impulse);
+            rb2d.AddForce(distination * 10, ForceMode2D.Impulse);
+        }
+    }
+
 }
